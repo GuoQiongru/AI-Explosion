@@ -11,13 +11,13 @@ type TableVideo struct {
 	PlayUrl     string `json:"play_url"`
 	CoverUrl    string `json:"cover_url"`
 	PublishTime time.Time
-	Title       string `json:"title"` //视频名，5.23添加
+	Title       string `json:"title"` //视频名
 }
 
 // TableName
 //
 //	将TableVideo映射到videos，
-//	这样我结构体到名字就不需要是Video了，防止和我Service层到结构体名字冲突
+//	这样结构体到名字就不需要是Video了，防止和Service层到结构体名字冲突
 func (TableVideo) TableName() string {
 	return "videos"
 }
