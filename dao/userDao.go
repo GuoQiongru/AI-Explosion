@@ -1,11 +1,15 @@
 package dao
+
 import (
 	"log"
+
+	"gorm.io/gorm"
 )
 
 type TableUser struct {
-	Id		 int64
-	Name	 string
+	gorm.Model
+	Id       int64
+	Name     string
 	Password string
 }
 
