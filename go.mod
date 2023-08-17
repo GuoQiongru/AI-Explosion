@@ -4,7 +4,9 @@ go 1.20
 
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/dutchcoders/goftp v0.0.0-20170301105846-ed59a591ce14
 	github.com/gin-gonic/gin v1.9.1
+	github.com/satori/go.uuid v1.2.0
 	gorm.io/driver/mysql v1.5.1
 	gorm.io/gorm v1.25.2
 )

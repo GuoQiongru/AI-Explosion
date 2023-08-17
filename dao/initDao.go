@@ -29,6 +29,7 @@ func Init() {
 	})
 
 	Db.AutoMigrate(&TableUser{})
+	Db.AutoMigrate(&TableVideo{})
 
 	if err != nil {
 		log.Panicln("err:", err.Error())
