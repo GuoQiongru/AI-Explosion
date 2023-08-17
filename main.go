@@ -3,6 +3,7 @@ package main
 import (
 	"TikTok/controller"
 	"TikTok/dao"
+	"TikTok/middleware/ffmpeg"
 	"TikTok/middleware/ftp"
 	"TikTok/middleware/jwt"
 
@@ -17,6 +18,7 @@ func initDeps() {
 	//初始化数据库
 	dao.Init()
 	ftp.InitFTP()
+	ffmpeg.InitSSH()
 
 	r := gin.Default()
 	initRouter(r)

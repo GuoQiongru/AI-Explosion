@@ -66,11 +66,11 @@ func GetVideosByLastTime(lastTime time.Time) ([]TableVideo, error) {
 }
 
 // Save 保存视频记录
-func Save(videoName string, authorId int64, title string) error {
+func Save(videoName string, imageName string, authorId int64, title string) error {
 	var video TableVideo
 	video.PublishTime = time.Now()
-	video.PlayUrl = config.PlayUrlPrefix + videoName
-	video.CoverUrl = ""
+	video.PlayUrl = config.UrlPrefix + videoName
+	video.CoverUrl = config.UrlPrefix + imageName
 	video.AuthorId = authorId
 	video.Title = title
 	result := Db.Save(&video)
