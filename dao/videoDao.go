@@ -2,6 +2,9 @@ package dao
 
 import (
 	"TikTok/config"
+	"TikTok/middleware/ftp"
+	"io"
+	"log"
 	"time"
 )
 
@@ -88,4 +91,41 @@ func GetVideoIdsByAuthorId(authorId int64) ([]int64, error) {
 		return nil, result.Error
 	}
 	return id, nil
+}
+
+// VideoFTP
+// 通过ftp将视频传入服务器
+func VideoFTP(file io.Reader, videoName string) error {
+	//转到video相对路线下
+	err := ftp.MyFTP.Cwd("video")
+	if err != nil {
+		log.Println("转到路径video失败！！！" + err.Error())
+	} else {
+		log.Println("转到路径video成功！！！")
+	}
+	err = ftp.MyFTP.Stor(videoName+".mp4", file)
+	if err != nil {
+		log.Println("上传视频失败！！！！！")
+		return err
+	}
+	log.Println("上传视频成功！！！！！")
+	return nil
+}
+
+// ImageFTP
+// 将图片传入FTP服务器中，但是这里要注意图片的格式随着名字一起给,同时调用时需要自己结束流
+func ImageFTP(file io.Reader, imageName string) error {
+	//转到video相对路线下
+	err := ftp.MyFTP.Cwd("images")
+	if err != nil {
+		log.Println("转到路径images失败！！！")
+		return err
+	}
+	log.Println("转到路径images成功！！！")
+	if err = ftp.MyFTP.Stor(imageName, file); err != nil {
+		log.Println("上传图片失败！！！！！")
+		return err
+	}
+	log.Println("上传图片成功！！！！！")
+	return nil
 }

@@ -4,11 +4,12 @@ import (
 	"TikTok/dao"
 	"TikTok/service"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 type FeedResponse struct {
@@ -21,7 +22,7 @@ func Feed(c *gin.Context) {
 	inputTime := c.Query("latest_time")
 	log.Printf("传入的时间" + inputTime)
 	var lastTime time.Time
-	if inputTime != "0" {
+	if inputTime != "" {
 		me, _ := strconv.ParseInt(inputTime, 10, 64)
 		lastTime = time.Unix(me, 0)
 	} else {
