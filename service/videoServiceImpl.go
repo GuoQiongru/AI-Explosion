@@ -2,6 +2,7 @@ package service
 
 import (
 	"TikTok/dao"
+	"TikTok/middleware/ffmpeg"
 	"log"
 	"mime/multipart"
 	"time"
@@ -42,41 +43,22 @@ func (videoService *VideoServiceImpl) Publish(c *gin.Context, data *multipart.Fi
 	log.Printf("方法dao.VideoFTP(file, videoName) 成功")
 	defer file.Close()
 
-	err = dao.Save(videoName+".mp4", userId, title)
+	//在服务器上执行ffmpeg 从视频流中获取第一帧截图，并上传图片服务器，保存图片链接
+	imageName := uuid.NewV4().String()
+	//向队列中添加消息
+	ffmpeg.Ffchan <- ffmpeg.Ffmsg{
+		videoName,
+		imageName,
+	}
+	//组装并持久化
+
+	err = dao.Save(videoName+".mp4", imageName+".jpg", userId, title)
 	if err != nil {
 		log.Printf("方法dao.Save(videoName, imageName, userId) 失败%v", err)
 		return err
 	}
 	log.Printf("方法dao.Save(videoName, imageName, userId) 成功")
 	return nil
-	/**
-	//获取文件名称
-	fmt.Println(file.Filename)
-	//文件大小
-	fmt.Println(file.Size)
-	//获取文件的后缀名
-	extstring := path.Ext(file.Filename)
-	fmt.Println(extstring)
-	//根据当前时间鹾生成一个新的文件名
-	fileNameInt := time.Now().Unix()
-	fileNameStr := strconv.FormatInt(fileNameInt, 10)
-	//新的文件名
-	fileName := fileNameStr + extstring
-	//保存上传文件
-	filePath := filepath.Join("upload", "/", fileName)
-	err := c.SaveUploadedFile(file, filePath)
-	if err != nil {
-		return err
-	}
-
-	err = dao.Save(fileName, userId, title)
-	if err != nil {
-		log.Printf("方法dao.Save(videoName, imageName, userId) 失败%v", err)
-
-		return err
-	}
-	return nil
-	**/
 }
 
 func (videoService VideoServiceImpl) List(userId int64) ([]dao.TableVideo, error) {
