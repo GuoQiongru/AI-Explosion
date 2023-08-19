@@ -1,6 +1,7 @@
 package service
 
 import (
+	"TikTok/config"
 	"TikTok/dao"
 	"TikTok/middleware/ffmpeg"
 	"log"
@@ -17,13 +18,25 @@ type VideoServiceImpl struct {
 	VideoService
 }
 
-func (videoService VideoServiceImpl) Feed(lastTime time.Time) ([]dao.TableVideo, error) {
-	feed, err := dao.GetVideosByLastTime(lastTime)
+func (videoService VideoServiceImpl) Feed(lastTime time.Time, userId int64) ([]Video, time.Time, error) {
+	//创建对应返回视频的切片数组，提前将切片的容量设置好，可以减少切片扩容的性能
+	videos := make([]Video, 0, config.VideoCount)
+	//根据传入的时间，获得传入时间前n个视频，可以通过config.videoCount来控制
+	tableVideos, err := dao.GetVideosByLastTime(lastTime)
 	if err != nil {
-		return nil, err
+		log.Printf("方法dao.GetVideosByLastTime(lastTime) 失败：%v", err)
+		return nil, time.Time{}, err
 	}
-
-	return feed, nil
+	log.Printf("方法dao.GetVideosByLastTime(lastTime) 成功：%v", tableVideos)
+	//将数据通过copyVideos进行处理，在拷贝的过程中对数据进行组装
+	err = videoService.copyVideos(&videos, &tableVideos, userId)
+	if err != nil {
+		log.Printf("方法videoService.copyVideos(&videos, &tableVideos, userId) 失败：%v", err)
+		return nil, time.Time{}, err
+	}
+	log.Printf("方法videoService.copyVideos(&videos, &tableVideos, userId) 成功")
+	//返回数据，同时获得视频中最早的时间返回
+	return videos, tableVideos[len(tableVideos)-1].PublishTime, nil
 }
 
 func (videoService *VideoServiceImpl) Publish(data *multipart.FileHeader, userId int64, title string) error {
@@ -63,13 +76,35 @@ func (videoService *VideoServiceImpl) Publish(data *multipart.FileHeader, userId
 	return nil
 }
 
-func (videoService VideoServiceImpl) List(userId int64) ([]dao.TableVideo, error) {
-	feed, err := dao.GetVideosByAuthorId(userId)
+func (videoService *VideoServiceImpl) List(userId int64, curId int64) ([]Video, error) {
+	//依据用户id查询所有的视频，获取视频列表
+	data, err := dao.GetVideosByAuthorId(userId)
 	if err != nil {
+		log.Printf("方法dao.GetVideosByAuthorId(%v)失败:%v", userId, err)
 		return nil, err
 	}
+	log.Printf("方法dao.GetVideosByAuthorId(%v)成功:%v", userId, data)
+	//提前定义好切片长度
+	result := make([]Video, 0, len(data))
+	//调用拷贝方法，将数据进行转换
+	err = videoService.copyVideos(&result, &data, curId)
+	if err != nil {
+		log.Printf("方法videoService.copyVideos(&result, &data, %v)失败:%v", userId, err)
+		return nil, err
+	}
+	//如果数据没有问题，则直接返回
+	return result, nil
+}
 
-	return feed, nil
+// 该方法可以将数据进行拷贝和转换，并从其他方法获取对应的数据
+func (videoService *VideoServiceImpl) copyVideos(result *[]Video, data *[]dao.TableVideo, userId int64) error {
+	for _, temp := range *data {
+		var video Video
+		//将video进行组装，添加想要的信息,插入从数据库中查到的数据
+		videoService.creatVideo(&video, &temp, userId)
+		*result = append(*result, video)
+	}
+	return nil
 }
 
 func (videoService *VideoServiceImpl) GetVideo(videoId int64, userId int64) (Video, error) {

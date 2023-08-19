@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"TikTok/dao"
 	"TikTok/service"
 	"fmt"
 	"log"
@@ -14,7 +13,7 @@ import (
 
 type FeedResponse struct {
 	Response
-	VideoList []dao.TableVideo `json:"video_list"`
+	VideoList []service.Video `json:"video_list"`
 	NextTime  int64            `json:"next_time"`
 }
 
@@ -33,7 +32,7 @@ func Feed(c *gin.Context) {
 	log.Printf("获取到用户id:%v\n", userId)
 
 	videoService := GetVideo()
-	feed, err := videoService.Feed(lastTime)
+	feed, nextTime, err := videoService.Feed(lastTime, userId)
 	if err != nil {
 		log.Printf("方法videoService.Feed(lastTime, userId) 失败：%v", err)
 		c.JSON(http.StatusOK, FeedResponse{
@@ -46,7 +45,7 @@ func Feed(c *gin.Context) {
 	c.JSON(http.StatusOK, FeedResponse{
 		Response:  Response{StatusCode: 0},
 		VideoList: feed,
-		NextTime:  time.Now().Unix(),
+		NextTime:  nextTime.Unix(),
 	})
 }
 
@@ -85,7 +84,7 @@ func PublishList(c *gin.Context) {
 	log.Printf("获取到当前用户id:%v\n", curId)
 
 	videoService := GetVideo()
-	feed, err := videoService.List(userId)
+	feed, err := videoService.List(userId, curId)
 	if err != nil {
 		c.JSON(http.StatusOK, FeedResponse{
 			Response: Response{StatusCode: 1, StatusMsg: "获取视频流失败"},

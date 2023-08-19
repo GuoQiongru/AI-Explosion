@@ -15,14 +15,13 @@ type Video struct {
 }
 
 type VideoService interface {
-	Feed(lastTime time.Time) ([]dao.TableVideo, error)
+	Feed(lastTime time.Time, userId int64) ([]Video, time.Time, error)
 
 	GetVideo(videoId int64, userId int64) (Video, error)
 
 	Publish(data *multipart.FileHeader, userId int64, title string) error
 
-	List(userId int64) ([]dao.TableVideo, error)
+	List(userId int64, curId int64) ([]Video, error)
 
 	GetVideoIdList(userId int64) ([]int64, error)
-
 }
