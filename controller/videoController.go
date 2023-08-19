@@ -66,7 +66,7 @@ func Publish(c *gin.Context) {
 	}
 
 	videoService := GetVideo()
-	err = videoService.Publish(c, file, userId, title)
+	err = videoService.Publish(file, userId, title)
 	if err != nil {
 		return
 	}
@@ -101,6 +101,12 @@ func PublishList(c *gin.Context) {
 }
 
 func GetVideo() service.VideoServiceImpl {
+	var userService service.UserServiceImpl
 	var videoService service.VideoServiceImpl
+	var likeService service.LikeServiceImpl
+	userService.LikeService = &likeService
+	likeService.VideoService = &videoService
+	videoService.LikeService = &likeService
+	videoService.UserService = &userService
 	return videoService
 }

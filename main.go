@@ -6,6 +6,8 @@ import (
 	"TikTok/middleware/ffmpeg"
 	"TikTok/middleware/ftp"
 	"TikTok/middleware/jwt"
+	"TikTok/middleware/rabbitmq"
+	"TikTok/middleware/redis"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,7 +21,10 @@ func initDeps() {
 	dao.Init()
 	ftp.InitFTP()
 	ffmpeg.InitSSH()
-
+	redis.InitRedis()
+	// 初始化rabbitMQ。
+	rabbitmq.InitRabbitMQ()
+	rabbitmq.InitLikeRabbitMQ()
 	r := gin.Default()
 	initRouter(r)
 	r.Run()
@@ -35,5 +40,8 @@ func initRouter(r *gin.Engine) {
 	apiRouter.POST("/video/publish/action/", jwt.AuthWithForm(), controller.Publish)
 	apiRouter.GET("/video/feed/", jwt.SoftAuth(), controller.Feed)
 	apiRouter.GET("/video/publish/list/", jwt.Auth(), controller.PublishList)
+
+	apiRouter.POST("/favorite/action/", jwt.Auth(), controller.FavoriteAction)
+	apiRouter.GET("/favorite/list/", jwt.Auth(), controller.GetFavouriteList)
 
 }

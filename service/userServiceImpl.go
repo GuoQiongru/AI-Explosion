@@ -16,6 +16,7 @@ import (
 
 type UserServiceImpl struct {
 	UserService
+	LikeService
 }
 
 func (usi *UserServiceImpl) GetableUserList() []dao.TableUser {
