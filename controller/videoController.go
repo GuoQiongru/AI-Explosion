@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"TikTok/dao"
 	"TikTok/service"
 	"fmt"
 	"log"
@@ -14,15 +13,15 @@ import (
 
 type FeedResponse struct {
 	Response
-	VideoList []dao.TableVideo `json:"video_list"`
-	NextTime  int64            `json:"next_time"`
+	VideoList []service.Video `json:"video_list"`
+	NextTime  int64           `json:"next_time"`
 }
 
 func Feed(c *gin.Context) {
 	inputTime := c.Query("latest_time")
 	log.Printf("传入的时间" + inputTime)
 	var lastTime time.Time
-	if inputTime != "" {
+	if inputTime != "" && inputTime != "0" {
 		me, _ := strconv.ParseInt(inputTime, 10, 64)
 		lastTime = time.Unix(me, 0)
 	} else {
@@ -33,7 +32,7 @@ func Feed(c *gin.Context) {
 	log.Printf("获取到用户id:%v\n", userId)
 
 	videoService := GetVideo()
-	feed, err := videoService.Feed(lastTime)
+	feed, nextTime, err := videoService.Feed(lastTime, userId)
 	if err != nil {
 		log.Printf("方法videoService.Feed(lastTime, userId) 失败：%v", err)
 		c.JSON(http.StatusOK, FeedResponse{
@@ -46,7 +45,7 @@ func Feed(c *gin.Context) {
 	c.JSON(http.StatusOK, FeedResponse{
 		Response:  Response{StatusCode: 0},
 		VideoList: feed,
-		NextTime:  time.Now().Unix(),
+		NextTime:  nextTime.Unix(),
 	})
 }
 
@@ -66,7 +65,7 @@ func Publish(c *gin.Context) {
 	}
 
 	videoService := GetVideo()
-	err = videoService.Publish(c, file, userId, title)
+	err = videoService.Publish(file, userId, title)
 	if err != nil {
 		return
 	}
@@ -85,7 +84,7 @@ func PublishList(c *gin.Context) {
 	log.Printf("获取到当前用户id:%v\n", curId)
 
 	videoService := GetVideo()
-	feed, err := videoService.List(userId)
+	feed, err := videoService.List(userId, curId)
 	if err != nil {
 		c.JSON(http.StatusOK, FeedResponse{
 			Response: Response{StatusCode: 1, StatusMsg: "获取视频流失败"},
@@ -101,6 +100,12 @@ func PublishList(c *gin.Context) {
 }
 
 func GetVideo() service.VideoServiceImpl {
+	var userService service.UserServiceImpl
 	var videoService service.VideoServiceImpl
+	var likeService service.LikeServiceImpl
+	userService.LikeService = &likeService
+	likeService.VideoService = &videoService
+	videoService.LikeService = &likeService
+	videoService.UserService = &userService
 	return videoService
 }
