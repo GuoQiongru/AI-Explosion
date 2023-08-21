@@ -29,6 +29,12 @@ func InitFTP() {
 }
 
 func keepAlive() {
-	time.Sleep(time.Duration(config.HeartbeatTime) * time.Second)
-	MyFTP.Noop()
+	for {
+		time.Sleep(time.Duration(config.HeartbeatTime) * time.Second)
+		err := MyFTP.Noop()
+		if err != nil {
+			log.Printf("FTP NOOP Fail")
+		}
+		log.Printf("FTP NOOP Successed")
+	}
 }

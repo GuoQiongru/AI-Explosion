@@ -36,7 +36,11 @@ func (videoService VideoServiceImpl) Feed(lastTime time.Time, userId int64) ([]V
 	}
 	log.Printf("方法videoService.copyVideos(&videos, &tableVideos, userId) 成功")
 	//返回数据，同时获得视频中最早的时间返回
-	return videos, tableVideos[len(tableVideos)-1].PublishTime, nil
+	nextTime := time.Now()
+	if len(tableVideos) > 0 {
+		nextTime = tableVideos[len(tableVideos)-1].PublishTime
+	}
+	return videos, nextTime, nil
 }
 
 func (videoService *VideoServiceImpl) Publish(data *multipart.FileHeader, userId int64, title string) error {
