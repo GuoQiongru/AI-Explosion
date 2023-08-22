@@ -2,8 +2,9 @@ package rabbitmq
 
 import (
 	"fmt"
-	"github.com/streadway/amqp"
 	"log"
+
+	"github.com/streadway/amqp"
 )
 
 const MQURL = "amqp://tiktok:123456@47.113.148.197:5672/"
@@ -15,7 +16,6 @@ type RabbitMQ struct {
 
 var Rmq *RabbitMQ
 
-// InitRabbitMQ 初始化RabbitMQ的连接和通道。
 func InitRabbitMQ() {
 
 	Rmq = &RabbitMQ{
@@ -27,7 +27,6 @@ func InitRabbitMQ() {
 
 }
 
-// 连接出错时，输出错误信息。
 func (r *RabbitMQ) failOnErr(err error, message string) {
 	if err != nil {
 		log.Fatalf("%s:%s\n", err, message)
@@ -35,7 +34,6 @@ func (r *RabbitMQ) failOnErr(err error, message string) {
 	}
 }
 
-// 关闭mq通道和mq的连接。
 func (r *RabbitMQ) destroy() {
 	r.conn.Close()
 }

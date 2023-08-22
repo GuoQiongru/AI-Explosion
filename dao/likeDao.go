@@ -1,16 +1,16 @@
 package dao
 
 import (
-	"log"
 	"TikTok/config"
 	"errors"
+	"log"
 )
 
 type Like struct {
-	Id	int64
-	UserId int64
+	Id      int64
+	UserId  int64
 	VideoId int64
-	Cancel int8
+	Cancel  int8
 }
 
 func (Like) TableName() string {

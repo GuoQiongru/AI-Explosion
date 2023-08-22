@@ -43,12 +43,12 @@ func Register(c *gin.Context) {
 			Name:     username,
 			Password: service.EnCoder(password),
 		}
-		if usi.InsertTableUser(&newUser) != true {
+		if !usi.InsertTableUser(&newUser) {
 			println("Insert Data Fail")
 		}
 		u := usi.GetTableUserByUsername(username)
 		token := service.GenerateToken(username)
-		log.Println("注册返回的id: ", u.Id)
+		log.Println("Register Successed, UserId: ", u.Id)
 		c.JSON(http.StatusOK, UserLoginResponse{
 			Response: Response{StatusCode: 0},
 			UserId:   u.Id,
