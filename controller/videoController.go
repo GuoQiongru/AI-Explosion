@@ -19,7 +19,6 @@ type FeedResponse struct {
 
 func Feed(c *gin.Context) {
 	inputTime := c.Query("latest_time")
-	log.Printf("传入的时间" + inputTime)
 	var lastTime time.Time
 	if inputTime != "" && inputTime != "0" {
 		me, _ := strconv.ParseInt(inputTime, 10, 64)
@@ -27,21 +26,19 @@ func Feed(c *gin.Context) {
 	} else {
 		lastTime = time.Now()
 	}
-	log.Printf("获取到时间戳%v", lastTime)
+	log.Printf("LastTime: %v", lastTime)
 	userId, _ := strconv.ParseInt(c.GetString("userId"), 10, 64)
-	log.Printf("获取到用户id:%v\n", userId)
 
 	videoService := GetVideo()
 	feed, nextTime, err := videoService.Feed(lastTime, userId)
 	if err != nil {
-		log.Printf("方法videoService.Feed(lastTime, userId) 失败：%v", err)
+		log.Printf("videoService.Feed(lastTime, userId) Failed: %v", err)
 		c.JSON(http.StatusOK, FeedResponse{
-			Response: Response{StatusCode: 1, StatusMsg: "获取视频流失败"},
+			Response: Response{StatusCode: 1, StatusMsg: "feed Failed"},
 		})
 		return
 	}
 
-	log.Printf("方法videoService.Feed(lastTime, userId) 成功")
 	c.JSON(http.StatusOK, FeedResponse{
 		Response:  Response{StatusCode: 0},
 		VideoList: feed,
@@ -52,11 +49,11 @@ func Feed(c *gin.Context) {
 func Publish(c *gin.Context) {
 	file, err := c.FormFile("data")
 	userId, _ := strconv.ParseInt(c.GetString("userId"), 10, 64)
-	fmt.Printf("获取到用户id:%v\n", userId)
+	fmt.Printf("Video Publish UserId:%v\n", userId)
 	title := c.PostForm("title")
-	log.Printf("获取到视频title:%v\n", title)
+	log.Printf("Video Publish title:%v\n", title)
 	if err != nil {
-		log.Printf("获取视频流失败:%v", err)
+		log.Printf("Video Publish Failed :%v", err)
 		c.JSON(http.StatusOK, Response{
 			StatusCode: 1,
 			StatusMsg:  err.Error(),
@@ -79,15 +76,15 @@ func Publish(c *gin.Context) {
 func PublishList(c *gin.Context) {
 	user_Id, _ := c.GetQuery("user_id")
 	userId, _ := strconv.ParseInt(user_Id, 10, 64)
-	log.Printf("获取到用户id:%v\n", userId)
+	log.Printf("userId:%v\n", userId)
 	curId, _ := strconv.ParseInt(c.GetString("userId"), 10, 64)
-	log.Printf("获取到当前用户id:%v\n", curId)
+	log.Printf("curId:%v\n", curId)
 
 	videoService := GetVideo()
 	feed, err := videoService.List(userId, curId)
 	if err != nil {
 		c.JSON(http.StatusOK, FeedResponse{
-			Response: Response{StatusCode: 1, StatusMsg: "获取视频流失败"},
+			Response: Response{StatusCode: 1, StatusMsg: "publishList failed"},
 		})
 		return
 	}

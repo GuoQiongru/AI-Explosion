@@ -11,7 +11,7 @@ const VideoCount = 5
 // 存储的图片和视频的链接
 const UrlPrefix = "http://47.113.148.197/" //服务器地址
 
-// ConConfig ftp服务器地址
+// ConConfig ftp服务器
 const ConConfig = "47.113.148.197:21"
 const FtpUser = "ftpuser"
 const FtpPsw = "123456"
@@ -33,4 +33,4 @@ const Attempts = 3   //操作数据库的最大尝试次数
 
 const RedisAddr = "47.113.148.197:6379"
 const RedisPsw = "123456"
-const DefaultRedisValue = -1 //redis中key对应的预设值，防脏读
+const DefaultRedisValue = -1 //防脏读

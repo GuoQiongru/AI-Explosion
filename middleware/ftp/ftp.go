@@ -15,9 +15,9 @@ func InitFTP() {
 	var err error
 	MyFTP, err = goftp.Connect(config.ConConfig)
 	if err != nil {
-		log.Printf("获取到FTP链接失败！！！")
+		log.Printf("Connect FTP Fail")
 	}
-	log.Printf("获取到FTP链接成功%v：", MyFTP)
+	log.Printf("Connect FTP Successed: %v：", MyFTP)
 
 	err = MyFTP.Login(config.FtpUser, config.FtpPsw)
 	if err != nil {

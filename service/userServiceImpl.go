@@ -65,9 +65,9 @@ func (use *UserServiceImpl) GetUserById(id int64) (User, error) {
 		Name:           "",
 		FollowCount:    0,
 		FollowerCount:  0,
-		IsFollow:       false,
 		TotalFavorited: 0,
 		FavoriteCount:  0,
+		Avatar:         "http://47.113.148.197/user.jpg",
 	}
 	tableUser, err := dao.GetTableUserById(id)
 	if err != nil {
@@ -76,13 +76,11 @@ func (use *UserServiceImpl) GetUserById(id int64) (User, error) {
 		return user, err
 	}
 	log.Println("Query User Success")
-	//follow and like uncompled
 	user = User{
 		Id:             id,
 		Name:           tableUser.Name,
 		FollowCount:    0,
 		FollowerCount:  0,
-		IsFollow:       false,
 		TotalFavorited: 0,
 		FavoriteCount:  0,
 	}
