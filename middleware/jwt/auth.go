@@ -32,8 +32,6 @@ func Auth() gin.HandlerFunc {
 				StatusCode: -1,
 				StatusMsg:  "Token Error",
 			})
-		} else {
-			println("token 正确")
 		}
 		context.Set("userId", token.Id)
 		context.Next()
@@ -59,8 +57,6 @@ func AuthWithForm() gin.HandlerFunc {
 				StatusCode: -1,
 				StatusMsg:  "Token Error",
 			})
-		} else {
-			println("token 正确")
 		}
 		context.Set("userId", token.Id)
 		context.Next()
@@ -85,7 +81,6 @@ func SoftAuth() gin.HandlerFunc {
 				})
 			} else {
 				userId = token.Id
-				println("token 正确")
 			}
 		}
 		context.Set("userId", userId)
