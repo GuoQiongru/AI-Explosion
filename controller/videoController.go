@@ -76,9 +76,7 @@ func Publish(c *gin.Context) {
 func PublishList(c *gin.Context) {
 	user_Id, _ := c.GetQuery("user_id")
 	userId, _ := strconv.ParseInt(user_Id, 10, 64)
-	log.Printf("userId:%v\n", userId)
 	curId, _ := strconv.ParseInt(c.GetString("userId"), 10, 64)
-	log.Printf("curId:%v\n", curId)
 
 	videoService := GetVideo()
 	feed, err := videoService.List(userId, curId)

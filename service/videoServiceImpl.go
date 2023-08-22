@@ -73,7 +73,6 @@ func (videoService *VideoServiceImpl) List(userId int64, curId int64) ([]Video, 
 		log.Printf("dao.GetVideosByAuthorId(%v) failed: %v", userId, err)
 		return nil, err
 	}
-	log.Printf("dao.GetVideosByAuthorId(%v) successfully: %v", userId, data)
 	result := make([]Video, 0, len(data))
 	err = videoService.copyVideos(&result, &data, curId)
 	if err != nil {
