@@ -74,8 +74,11 @@ func GetVideoIdsByAuthorId(authorId int64) ([]int64, error) {
 }
 
 func VideoFTP(file io.Reader, videoName string) error {
-	ftp.MyFTP.Cwd("video")
-	err := ftp.MyFTP.Stor(videoName+".mp4", file)
+	err := ftp.MyFTP.Cwd("video")
+	if err != nil {
+		log.Println("change path to /video failed")
+	}
+	err = ftp.MyFTP.Stor(videoName+".mp4", file)
 	if err != nil {
 		log.Println("VideoFTP Failed")
 		return err
@@ -85,8 +88,12 @@ func VideoFTP(file io.Reader, videoName string) error {
 }
 
 func ImageFTP(file io.Reader, imageName string) error {
-	ftp.MyFTP.Cwd("images")
-	if err := ftp.MyFTP.Stor(imageName, file); err != nil {
+	err := ftp.MyFTP.Cwd("images")
+	if err != nil {
+		log.Println("change path to /images failed")
+		return err
+	}
+	if err = ftp.MyFTP.Stor(imageName, file); err != nil {
 		log.Println("ImageFTP Failed")
 		return err
 	}
