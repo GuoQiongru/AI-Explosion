@@ -67,7 +67,7 @@ func (use *UserServiceImpl) GetUserById(id int64) (User, error) {
 		FollowerCount:  0,
 		TotalFavorited: 0,
 		FavoriteCount:  0,
-		Avatar:         "http://47.113.148.197/user.jpg",
+		Avatar:         "",
 	}
 	tableUser, err := dao.GetTableUserById(id)
 	if err != nil {
@@ -83,6 +83,7 @@ func (use *UserServiceImpl) GetUserById(id int64) (User, error) {
 		FollowerCount:  0,
 		TotalFavorited: 0,
 		FavoriteCount:  0,
+		Avatar:         "http://47.113.148.197/user.jpg",
 	}
 	return user, nil
 
