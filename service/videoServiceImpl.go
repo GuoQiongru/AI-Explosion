@@ -99,8 +99,6 @@ func (videoService *VideoServiceImpl) GetVideo(videoId int64, userId int64) (Vid
 	if err != nil {
 		log.Printf("dao.GetVideoByVideoId(videoId) failed: %v", err)
 		return video, err
-	} else {
-		log.Printf("dao.GetVideoByVideoId(videoId) successfully")
 	}
 
 	videoService.creatVideo(&video, &data, userId)
@@ -116,8 +114,6 @@ func (videoService *VideoServiceImpl) creatVideo(video *Video, data *dao.TableVi
 		video.Author, err = videoService.GetUserById(data.AuthorId)
 		if err != nil {
 			log.Printf("videoService.GetUserByIdWithCurId(data.AuthorId, userId) failed:%v", err)
-		} else {
-			log.Printf("videoService.GetUserByIdWithCurId(data.AuthorId, userId) successfully")
 		}
 		wg.Done()
 	}()
@@ -126,8 +122,6 @@ func (videoService *VideoServiceImpl) creatVideo(video *Video, data *dao.TableVi
 		video.FavoriteCount, err = videoService.FavouriteCount(data.Id)
 		if err != nil {
 			log.Printf("videoService.FavouriteCount(data.ID) failed:%v", err)
-		} else {
-			log.Printf("videoService.FavouriteCount(data.ID) successfully")
 		}
 		wg.Done()
 	}()
@@ -136,8 +130,6 @@ func (videoService *VideoServiceImpl) creatVideo(video *Video, data *dao.TableVi
 		video.IsFavorite, err = videoService.IsFavourite(video.Id, userId)
 		if err != nil {
 			log.Printf("videoService.IsFavourit(video.Id, userId) failed:%v", err)
-		} else {
-			log.Printf("videoService.IsFavourit(video.Id, userId) successfully")
 		}
 		wg.Done()
 	}()

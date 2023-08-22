@@ -75,7 +75,6 @@ func (use *UserServiceImpl) GetUserById(id int64) (User, error) {
 		log.Println("User Not Found")
 		return user, err
 	}
-	log.Println("Query User Success")
 	user = User{
 		Id:             id,
 		Name:           tableUser.Name,
