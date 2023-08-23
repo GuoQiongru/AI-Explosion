@@ -4,7 +4,7 @@ import (
 	"TikTok/controller"
 	"TikTok/dao"
 
-	//	"TikTok/middleware/ffmpeg"
+	"TikTok/middleware/ffmpeg"
 	"TikTok/middleware/ftp"
 	"TikTok/middleware/jwt"
 	"TikTok/middleware/rabbitmq"
@@ -21,7 +21,7 @@ func initDeps() {
 	//初始化数据库
 	dao.Init()
 	ftp.InitFTP()
-	//	ffmpeg.InitSSH()
+	ffmpeg.InitSSH()
 	redis.InitRedis()
 	rabbitmq.InitRabbitMQ()
 	rabbitmq.InitLikeRabbitMQ()
