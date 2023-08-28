@@ -35,7 +35,7 @@ func Count(videoId int64) (int64, error) {
 
 func CommentIdList(videoId int64) ([]string, error) {
 	var commentIdList []string
-	err := Db.Model(Comment{}).Select("id").Where("video_id = ?", videoId).Find(&commentIdList).Error
+	err := Db.Model(Comment{}).Select("id").Where("video_id = ?  AND cancel = 0", videoId).Find(&commentIdList).Error
 	if err != nil {
 		log.Println("CommentIdList:", err)
 		return nil, err
