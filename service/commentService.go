@@ -14,18 +14,16 @@ type CommentService interface {
 
 type CommentInfo struct {
 	Id         int64  `json:"id"`
-	UserInfo   User   `json:"userinfo"`
+	UserInfo   User   `json:"user"`
 	Content    string `json:"content"`
-	CreateDate string `json:"createDate"`
+	CreateDate string `json:"create_date"`
 }
 
 type CommentData struct {
-	Id            int64     `json:"id"`
-	UserId        int64     `json:"userId"`
-	Name          string    `json:"name"`
-	FollowCount   int64     `json:"followCount"`
-	FollowerCount int64     `json:"followerCount"`
-	IsFollow      bool      `json:"isFollow"`
-	Content       string    `json:"content"`
-	CreateDate    time.Time `json:"createDate"`
+	Id         int64     `json:"id"`
+	UserId     int64     `json:"user_id"`
+	Name       string    `json:"name"`
+	Avatar     string    `json:"avatar"`
+	Content    string    `json:"content"`
+	CreateDate time.Time `json:"create_date"`
 }
