@@ -3,6 +3,7 @@ package main
 import (
 	"TikTok/controller"
 	"TikTok/dao"
+
 	"TikTok/middleware/ffmpeg"
 	"TikTok/middleware/ftp"
 	"TikTok/middleware/jwt"
@@ -17,7 +18,6 @@ func main() {
 }
 
 func initDeps() {
-	//初始化数据库
 	dao.Init()
 	ftp.InitFTP()
 	ffmpeg.InitSSH()
@@ -42,5 +42,8 @@ func initRouter(r *gin.Engine) {
 
 	apiRouter.POST("/favorite/action/", jwt.Auth(), controller.FavoriteAction)
 	apiRouter.GET("/favorite/list/", jwt.Auth(), controller.GetFavouriteList)
+
+	apiRouter.POST("/comment/action/", jwt.Auth(), controller.CommentAction)
+	apiRouter.GET("/comment/list/", jwt.SoftAuth(), controller.CommentList)
 
 }

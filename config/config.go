@@ -34,3 +34,7 @@ const Attempts = 3   //操作数据库的最大尝试次数
 const RedisAddr = "47.113.148.197:6379"
 const RedisPsw = "123456"
 const DefaultRedisValue = -1 //防脏读
+
+const ValidComment = 0   //评论状态：有效
+const InvalidComment = 1 //评论状态：取消
+const DateTime = "2006-01-02 15:04:05"
