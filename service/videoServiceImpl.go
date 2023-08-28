@@ -16,6 +16,7 @@ type VideoServiceImpl struct {
 	UserService
 	LikeService
 	VideoService
+	CommentService
 }
 
 func (videoService VideoServiceImpl) Feed(lastTime time.Time, userId int64) ([]Video, time.Time, error) {
@@ -106,7 +107,7 @@ func (videoService *VideoServiceImpl) GetVideo(videoId int64, userId int64) (Vid
 
 func (videoService *VideoServiceImpl) creatVideo(video *Video, data *dao.TableVideo, userId int64) {
 	var wg sync.WaitGroup
-	wg.Add(3)
+	wg.Add(4)
 	var err error
 	video.TableVideo = *data
 	go func() {
@@ -129,6 +130,16 @@ func (videoService *VideoServiceImpl) creatVideo(video *Video, data *dao.TableVi
 		video.IsFavorite, err = videoService.IsFavourite(video.Id, userId)
 		if err != nil {
 			log.Printf("videoService.IsFavourit(video.Id, userId) failed:%v", err)
+		}
+		wg.Done()
+	}()
+
+	go func() {
+		video.CommentCount, err = videoService.CountFromVideoId(data.Id)
+		if err != nil {
+			log.Printf("videoService.CountFromVideoId(data.ID) failed：%v", err)
+		} else {
+			log.Printf("%d:%d", data.Id, video.CommentCount)
 		}
 		wg.Done()
 	}()

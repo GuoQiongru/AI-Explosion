@@ -98,8 +98,10 @@ func GetVideo() service.VideoServiceImpl {
 	var userService service.UserServiceImpl
 	var videoService service.VideoServiceImpl
 	var likeService service.LikeServiceImpl
+	var commentService service.CommentServiceImpl
 	userService.LikeService = &likeService
 	likeService.VideoService = &videoService
+	videoService.CommentService = &commentService
 	videoService.LikeService = &likeService
 	videoService.UserService = &userService
 	return videoService

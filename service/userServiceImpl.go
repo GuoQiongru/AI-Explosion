@@ -61,13 +61,9 @@ func (usi *UserServiceImpl) InsertTableUser(tableUser *dao.TableUser) bool {
 
 func (use *UserServiceImpl) GetUserById(id int64) (User, error) {
 	user := User{
-		Id:             0,
-		Name:           "",
-		FollowCount:    0,
-		FollowerCount:  0,
-		TotalFavorited: 0,
-		FavoriteCount:  0,
-		Avatar:         "",
+		Id:     0,
+		Name:   "",
+		Avatar: "",
 	}
 	tableUser, err := dao.GetTableUserById(id)
 	if err != nil {
@@ -76,13 +72,9 @@ func (use *UserServiceImpl) GetUserById(id int64) (User, error) {
 		return user, err
 	}
 	user = User{
-		Id:             id,
-		Name:           tableUser.Name,
-		FollowCount:    0,
-		FollowerCount:  0,
-		TotalFavorited: 0,
-		FavoriteCount:  0,
-		Avatar:         "http://47.113.148.197/user.jpg",
+		Id:     id,
+		Name:   tableUser.Name,
+		Avatar: "http://47.113.148.197/user.jpg",
 	}
 	return user, nil
 

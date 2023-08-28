@@ -6,7 +6,7 @@ import (
 )
 
 type CommentService interface {
-	CountFromVideoID(id int64) (int64, error)
+	CountFromVideoId(id int64) (int64, error)
 	Send(comment dao.Comment) (CommentInfo, error)
 	DeleteComment(commentId int64) error
 	GetList(videoId int64, userId int64) ([]CommentInfo, error)

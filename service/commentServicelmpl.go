@@ -14,6 +14,7 @@ import (
 
 type CommentServiceImpl struct {
 	UserService
+	CommentService
 }
 
 // CountFromVideoId
@@ -127,10 +128,9 @@ func (c CommentServiceImpl) DelComment(commentId int64) error {
 		}
 		log.Println("del comment in Redis success:", del1, del2) //del1、del2代表删除了几条数据
 
-		
 		//使用mq进行数据库中评论的删除-评论状态更新
 		//评论id传入消息队列
-		
+
 		rabbitmq.RmqCommentDel.Publish(strconv.FormatInt(commentId, 10))
 		return nil
 	}
