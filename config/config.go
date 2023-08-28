@@ -37,4 +37,4 @@ const DefaultRedisValue = -1 //防脏读
 
 const ValidComment = 0   //评论状态：有效
 const InvalidComment = 1 //评论状态：取消
-const DateTime = "2018-05-12 15:04:05"
+const DateTime = "2006-01-02 15:04:05"
