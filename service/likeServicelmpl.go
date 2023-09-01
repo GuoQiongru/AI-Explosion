@@ -3,7 +3,6 @@ package service
 import (
 	"TikTok/config"
 	"TikTok/dao"
-	"TikTok/middleware/rabbitmq"
 	"TikTok/middleware/redis"
 	"errors"
 	"log"
@@ -60,7 +59,7 @@ func (like *LikeServiceImpl) IsFavourite(videoId int64, userId int64) (bool, err
 			}
 			videoIdList, err1 := dao.GetLikeVideoIdList(userId)
 			if err1 != nil {
-				log.Printf(err1.Error())
+				log.Print(err1.Error())
 				return false, err1
 			}
 			for _, likeVideoId := range videoIdList {
@@ -104,7 +103,7 @@ func (like *LikeServiceImpl) FavouriteCount(videoId int64) (int64, error) {
 		}
 		userIdList, err1 := dao.GetLikeUserIdList(videoId)
 		if err1 != nil {
-			log.Printf(err1.Error())
+			log.Print(err1.Error())
 			return 0, err1
 		}
 		for _, likeUserId := range userIdList {
@@ -138,7 +137,7 @@ func (like *LikeServiceImpl) FavouriteAction(userId int64, videoId int64, action
 				log.Printf("FavouriteAction RedisLikeUserId add value failed: %v", err1)
 				return err1
 			} else {
-				rabbitmq.RmqLikeAdd.Publish(sb.String())
+				like.addLike(userId, videoId)
 			}
 		} else {
 			if _, err := redis.RdbLikeUserId.SAdd(redis.Ctx, strUserId, config.DefaultRedisValue).Result(); err != nil {
@@ -168,7 +167,7 @@ func (like *LikeServiceImpl) FavouriteAction(userId int64, videoId int64, action
 				log.Printf("FavouriteAction RedisLikeUserId add value failed: %v", err2)
 				return err2
 			} else {
-				rabbitmq.RmqLikeAdd.Publish(sb.String())
+				like.addLike(userId, videoId)
 			}
 		}
 		if n, err := redis.RdbLikeVideoId.Exists(redis.Ctx, strVideoId).Result(); n > 0 {
@@ -219,7 +218,7 @@ func (like *LikeServiceImpl) FavouriteAction(userId int64, videoId int64, action
 				log.Printf("FavouriteAction RedisLikeUserId del value failed: %v", err1)
 				return err1
 			} else {
-				rabbitmq.RmqLikeDel.Publish(sb.String())
+				like.delLike(userId, videoId)
 			}
 		} else {
 			if _, err := redis.RdbLikeUserId.SAdd(redis.Ctx, strUserId, config.DefaultRedisValue).Result(); err != nil {
@@ -249,7 +248,7 @@ func (like *LikeServiceImpl) FavouriteAction(userId int64, videoId int64, action
 				log.Printf("FavouriteAction RedisLikeUserId del value failed: %v", err2)
 				return err2
 			} else {
-				rabbitmq.RmqLikeDel.Publish(sb.String())
+				like.delLike(userId, videoId)
 			}
 		}
 
@@ -417,7 +416,7 @@ func (like *LikeServiceImpl) FavouriteVideoCount(userId int64) (int64, error) {
 		}
 		videoIdList, err1 := dao.GetLikeVideoIdList(userId)
 		if err1 != nil {
-			log.Printf(err1.Error())
+			log.Print(err1.Error())
 			return 0, err1
 		}
 		for _, likeVideoId := range videoIdList {
@@ -438,7 +437,7 @@ func (like *LikeServiceImpl) addVideoLikeCount(videoId int64, videoLikeCountList
 	defer wg.Done()
 	count, err := like.FavouriteCount(videoId)
 	if err != nil {
-		log.Printf(err.Error())
+		log.Print(err.Error())
 		return
 	}
 	*videoLikeCountList = append(*videoLikeCountList, count)
@@ -452,4 +451,57 @@ func GetLikeService() LikeServiceImpl {
 	likeService.VideoService = &videoService
 	videoService.UserService = &userService
 	return likeService
+}
+
+func (like *LikeServiceImpl) delLike(userId int64, videoId int64) bool {
+	flag := false
+	likeInfo, err := dao.GetLikeInfo(userId, videoId)
+	if err != nil {
+		log.Print(err.Error())
+		flag = true
+	} else {
+		if likeInfo == (dao.Like{}) {
+			log.Print(errors.New("can't find data,this action invalid").Error())
+		} else {
+			if err := dao.UpdateLike(userId, videoId, config.Unlike); err != nil {
+				log.Print(err.Error())
+				flag = true
+			}
+		}
+	}
+	if !flag {
+		log.Println("删除失败")
+		return false
+	}
+	return true
+}
+
+func (like *LikeServiceImpl) addLike(userId int64, videoId int64) bool {
+	flag := false
+	var likeData dao.Like
+	likeInfo, err := dao.GetLikeInfo(userId, videoId)
+	if err != nil {
+		log.Print(err.Error())
+		flag = true
+	} else {
+		if likeInfo == (dao.Like{}) {
+			likeData.UserId = userId
+			likeData.VideoId = videoId
+			likeData.Cancel = config.IsLike
+			if err := dao.InsertLike(likeData); err != nil {
+				log.Print(err.Error())
+				flag = true
+			}
+		} else {
+			if err := dao.UpdateLike(userId, videoId, config.IsLike); err != nil {
+				log.Print(err.Error())
+				flag = true
+			}
+		}
+	}
+	if !flag {
+		log.Println("添加失败")
+		return false
+	}
+	return true
 }

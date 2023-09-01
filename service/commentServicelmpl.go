@@ -3,7 +3,6 @@ package service
 import (
 	"TikTok/config"
 	"TikTok/dao"
-	"TikTok/middleware/rabbitmq"
 	"TikTok/middleware/redis"
 	"log"
 	"sort"
@@ -128,11 +127,6 @@ func (c CommentServiceImpl) DelComment(commentId int64) error {
 		}
 		log.Println("del comment in Redis success:", del1, del2) //del1、del2代表删除了几条数据
 
-		//使用mq进行数据库中评论的删除-评论状态更新
-		//评论id传入消息队列
-
-		rabbitmq.RmqCommentDel.Publish(strconv.FormatInt(commentId, 10))
-		return nil
 	}
 	//不在内存中，则直接走数据库删除
 	return dao.DeleteComment(commentId)

@@ -7,7 +7,6 @@ import (
 	"TikTok/middleware/ffmpeg"
 	"TikTok/middleware/ftp"
 	"TikTok/middleware/jwt"
-	"TikTok/middleware/rabbitmq"
 	"TikTok/middleware/redis"
 
 	"github.com/gin-gonic/gin"
@@ -22,8 +21,6 @@ func initDeps() {
 	ftp.InitFTP()
 	ffmpeg.InitSSH()
 	redis.InitRedis()
-	rabbitmq.InitRabbitMQ()
-	rabbitmq.InitLikeRabbitMQ()
 	r := gin.Default()
 	initRouter(r)
 	r.Run()
