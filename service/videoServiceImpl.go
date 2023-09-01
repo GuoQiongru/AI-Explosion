@@ -138,8 +138,6 @@ func (videoService *VideoServiceImpl) creatVideo(video *Video, data *dao.TableVi
 		video.CommentCount, err = videoService.CountFromVideoId(data.Id)
 		if err != nil {
 			log.Printf("videoService.CountFromVideoId(data.ID) failed：%v", err)
-		} else {
-			log.Printf("%d:%d", data.Id, video.CommentCount)
 		}
 		wg.Done()
 	}()

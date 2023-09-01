@@ -25,14 +25,12 @@ func (c CommentServiceImpl) CountFromVideoId(videoId int64) (int64, error) {
 		//return 0, err
 		log.Println("count from redis error:", err)
 	}
-	log.Println("comment count redis :", cnt)
 	//1.缓存中查到了数量，则返回数量值-1（去除0值）
 	if cnt != 0 {
 		return cnt - 1, nil
 	}
 	//2.缓存中查不到则去数据库查
 	cntDao, err1 := dao.Count(videoId)
-	log.Println("comment count dao :", cntDao)
 	if err1 != nil {
 		log.Println("comment count dao err:", err1)
 		return 0, nil
