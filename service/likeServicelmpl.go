@@ -469,7 +469,7 @@ func (like *LikeServiceImpl) delLike(userId int64, videoId int64) bool {
 			}
 		}
 	}
-	if !flag {
+	if flag {
 		log.Println("删除失败")
 		return false
 	}
@@ -499,7 +499,7 @@ func (like *LikeServiceImpl) addLike(userId int64, videoId int64) bool {
 			}
 		}
 	}
-	if !flag {
+	if flag {
 		log.Println("添加失败")
 		return false
 	}
