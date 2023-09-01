@@ -7,7 +7,6 @@ import (
 	"TikTok/middleware/ffmpeg"
 	"TikTok/middleware/ftp"
 	"TikTok/middleware/jwt"
-	"TikTok/middleware/rabbitmq"
 	"TikTok/middleware/redis"
 
 	"github.com/gin-gonic/gin"
@@ -22,8 +21,6 @@ func initDeps() {
 	ftp.InitFTP()
 	ffmpeg.InitSSH()
 	redis.InitRedis()
-	rabbitmq.InitRabbitMQ()
-	rabbitmq.InitLikeRabbitMQ()
 	r := gin.Default()
 	initRouter(r)
 	r.Run()
@@ -38,10 +35,10 @@ func initRouter(r *gin.Engine) {
 
 	apiRouter.POST("/publish/action/", jwt.AuthWithForm(), controller.Publish)
 	apiRouter.GET("/feed/", jwt.SoftAuth(), controller.Feed)
-	apiRouter.GET("/publish/list/", jwt.Auth(), controller.PublishList)
+	apiRouter.GET("/publish/list/", jwt.SoftAuth(), controller.PublishList)
 
 	apiRouter.POST("/favorite/action/", jwt.Auth(), controller.FavoriteAction)
-	apiRouter.GET("/favorite/list/", jwt.Auth(), controller.GetFavouriteList)
+	apiRouter.GET("/favorite/list/", jwt.SoftAuth(), controller.GetFavouriteList)
 
 	apiRouter.POST("/comment/action/", jwt.Auth(), controller.CommentAction)
 	apiRouter.GET("/comment/list/", jwt.SoftAuth(), controller.CommentList)

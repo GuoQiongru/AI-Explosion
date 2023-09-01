@@ -3,7 +3,6 @@ package service
 import (
 	"TikTok/config"
 	"TikTok/dao"
-	"TikTok/middleware/rabbitmq"
 	"TikTok/middleware/redis"
 	"log"
 	"sort"
@@ -26,14 +25,12 @@ func (c CommentServiceImpl) CountFromVideoId(videoId int64) (int64, error) {
 		//return 0, err
 		log.Println("count from redis error:", err)
 	}
-	log.Println("comment count redis :", cnt)
 	//1.缓存中查到了数量，则返回数量值-1（去除0值）
 	if cnt != 0 {
 		return cnt - 1, nil
 	}
 	//2.缓存中查不到则去数据库查
 	cntDao, err1 := dao.Count(videoId)
-	log.Println("comment count dao :", cntDao)
 	if err1 != nil {
 		log.Println("comment count dao err:", err1)
 		return 0, nil
@@ -128,11 +125,6 @@ func (c CommentServiceImpl) DelComment(commentId int64) error {
 		}
 		log.Println("del comment in Redis success:", del1, del2) //del1、del2代表删除了几条数据
 
-		//使用mq进行数据库中评论的删除-评论状态更新
-		//评论id传入消息队列
-
-		rabbitmq.RmqCommentDel.Publish(strconv.FormatInt(commentId, 10))
-		return nil
 	}
 	//不在内存中，则直接走数据库删除
 	return dao.DeleteComment(commentId)

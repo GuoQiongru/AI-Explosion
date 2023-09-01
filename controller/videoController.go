@@ -23,6 +23,9 @@ func Feed(c *gin.Context) {
 	if inputTime != "" && inputTime != "0" {
 		me, _ := strconv.ParseInt(inputTime, 10, 64)
 		lastTime = time.Unix(me, 0)
+		if lastTime.After(time.Now()) {
+			lastTime = time.Now()
+		}
 	} else {
 		lastTime = time.Now()
 	}

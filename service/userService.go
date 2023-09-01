@@ -20,4 +20,5 @@ type User struct {
 	TotalFavorited int64  `json:"total_favorited,omitempty"`
 	FavoriteCount  int64  `json:"favorite_count,omitempty"`
 	Avatar         string `json:"avatar"`
+	IsFollow       bool   `json:"is_follow"`
 }
