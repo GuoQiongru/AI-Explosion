@@ -372,7 +372,7 @@ func (like *LikeServiceImpl) addFavouriteVideoList(videoId int64, curId int64, f
 func (like *LikeServiceImpl) TotalFavourite(userId int64) (int64, error) {
 	videoIdList, err := like.GetVideoIdList(userId)
 	if err != nil {
-		log.Printf(err.Error())
+		log.Print(err.Error())
 		return 0, err
 	}
 	var sum int64
