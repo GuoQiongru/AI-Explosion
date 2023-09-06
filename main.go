@@ -42,5 +42,4 @@ func initRouter(r *gin.Engine) {
 
 	apiRouter.POST("/comment/action/", jwt.Auth(), controller.CommentAction)
 	apiRouter.GET("/comment/list/", jwt.SoftAuth(), controller.CommentList)
-
 }
